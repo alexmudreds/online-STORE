@@ -9,6 +9,7 @@ class ProductDetals extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.red,
       appBar: AppBar(
         title: Text(
           product.title,
@@ -109,7 +110,10 @@ class ProductDetals extends StatelessWidget {
                       SizedBox(width: 8),
                       Text(
                         'Old Price',
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
@@ -147,7 +151,7 @@ class ProductDetals extends StatelessWidget {
             ),
             Container(
               decoration: BoxDecoration(
-                color:Color(0xFF1A73E8),
+                color: Color(0xFF1A73E8),
                 borderRadius: BorderRadius.circular(19),
               ),
               margin: EdgeInsets.all(12),
@@ -155,18 +159,18 @@ class ProductDetals extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                Text(
-                "Safe Payment",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w600,
-                ),
+                  Text(
+                    "Safe Payment",
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
-            ]),
-
             ),
-        SizedBox(width: 8),
+            SizedBox(width: 8),
             Container(
               padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
               decoration: BoxDecoration(
@@ -181,7 +185,7 @@ class ProductDetals extends StatelessWidget {
             SizedBox(height: 6),
             Text(
               "\$$product.price",
-            style: TextStyle(
+              style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
                 color: Color(0xFF1A73E8),
