@@ -3,6 +3,7 @@ import 'package:internetion/main.dart';
 import 'package:internetion/models/product_model.dart';
 import 'package:internetion/pages/product_detals.dart';
 import 'package:internetion/product_card.dart';
+import 'package:internetion/pages/cart_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,14 +14,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Product> products = [];
+  List<Map<String, dynamic>> cart = [];
   bool isLoading = false;
 
   Future<void> getAllProduct() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    await Future.delayed(Duration(seconds: 0));
+    setState(() => isLoading = true);
 
     final response = await dio.get('https://fakestoreapi.com/products');
 
@@ -39,9 +37,13 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    setState(() {
-      isLoading = false;
-    });
+    setState(() => isLoading = false);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getAllProduct();
   }
 
   @override
@@ -50,56 +52,80 @@ class _HomePageState extends State<HomePage> {
       children: [
         Scaffold(
           appBar: AppBar(
-            title: Text("My Store"),
-          ),
-          body: Column(
-            children: [
-              TextButton(
-                onPressed: getAllProduct,
-                child: Text(
-                  "Reload Products",
-                  style: TextStyle(
-                    color: Color(0xFF1A73E8),
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-
-              Expanded(
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  itemCount: products.length,
-                  itemBuilder: (context, index) {
-                    final Product product = products[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProductDetals(product: product),
+            title: Text("My Fake Store"),
+            actions: [
+              IconButton(
+                icon: Stack(
+                  children: [
+                    Icon(Icons.shopping_cart),
+                    if (cart.isNotEmpty)
+                      Positioned(
+                        right: 0,
+                        child: CircleAvatar(
+                          radius: 8,
+                          backgroundColor: Colors.red,
+                          child: Text(
+                            "${cart.length}",
+                            style: TextStyle(fontSize: 12, color: Colors.white),
                           ),
-                        );
-                      },
-                      child: ProductCard(product: product),
-                    );
-                  },
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                  ),
+                        ),
+                      )
+                  ],
                 ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CartPage(cart: cart),
+                    ),
+                  );
+                },
               ),
             ],
           ),
-        ),
 
-        if (isLoading)
-          Container(
-            color: Colors.black.withOpacity(0.4),
-            child: Center(
-              child: CircularProgressIndicator(),
+          body: isLoading
+              ? Center(child: CircularProgressIndicator())
+              : GridView.builder(
+            padding: EdgeInsets.all(12),
+            itemCount: products.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: 0.7,
             ),
+            itemBuilder: (context, index) {
+              Product product = products[index];
+              return GestureDetector(
+                onTap: () async {
+                  var result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProductDetals(product: product),
+                    ),
+                  );
+
+                  if (result != null && result is Map) {
+                    setState(() {
+                      cart.add(result.cast<String, dynamic>());
+                    });
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("${(result["product"] as Product).title} added to cart"),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                },
+
+
+                child: ProductCard(product: product),
+              );
+            },
           ),
+        ),
       ],
     );
   }

@@ -9,7 +9,6 @@ class ProductDetals extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.red,
       appBar: AppBar(
         title: Text(
           product.title,
@@ -110,10 +109,7 @@ class ProductDetals extends StatelessWidget {
                       SizedBox(width: 8),
                       Text(
                         'Old Price',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                       ),
                     ],
                   ),
@@ -151,7 +147,7 @@ class ProductDetals extends StatelessWidget {
             ),
             Container(
               decoration: BoxDecoration(
-                color: Color(0xFF1A73E8),
+                color:Color(0xFF1A73E8),
                 borderRadius: BorderRadius.circular(19),
               ),
               margin: EdgeInsets.all(12),
@@ -159,50 +155,72 @@ class ProductDetals extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Safe Payment",
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(width: 8),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Color(0xFF1A73E8),
-              ),
-              child: Text(
-                "buy now",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-            SizedBox(height: 6),
-            Text(
-              "\$$product.price",
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.w900,
-                color: Color(0xFF1A73E8),
-              ),
-            ),
-            Row(
-              children: [
                 Text(
-                  '\$299',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                    decoration: TextDecoration.lineThrough,
-                  ),
+                "Safe Payment",
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600,
                 ),
-                SizedBox(width: 8),
-              ],
+              ),
+            ]),
+
+            ),
+        SizedBox(width: 8),
+
+
+            ElevatedButton(
+              onPressed: () {
+                int count = 1;
+
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return StatefulBuilder(
+                      builder: (context, setStateDialog) {
+                        return AlertDialog(
+                          title: Text("Choose count"),
+                          content: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.remove),
+                                onPressed: () {
+                                  if (count > 1) setStateDialog(() => count--);
+                                },
+                              ),
+                              Text("$count", style: TextStyle(fontSize: 20)),
+                              IconButton(
+                                icon: Icon(Icons.add),
+                                onPressed: () {
+                                  if (count < 10) setStateDialog(() => count++);
+                                },
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text("Cancel"),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context); // закрываем диалог
+                                Navigator.pop(context, { // возвращаем result
+                                  "product": product,
+                                  "count": count,
+                                });
+                              },
+                              child: Text("Buy"),
+                            )
+                          ],
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+              child: Text("Buy Now", style: TextStyle(color: Colors.blue, fontSize: 20)),
             ),
           ],
         ),
